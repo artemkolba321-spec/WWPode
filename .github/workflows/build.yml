@@ -27,7 +27,7 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller --onefile app.py
+          pyinstaller --onefile WWPode/src/app.py
           # Для GUI на Windows/macOS можно добавить --windowed
 
       # Шаги для Linux только
