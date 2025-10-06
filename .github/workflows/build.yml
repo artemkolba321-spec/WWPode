@@ -1,0 +1,56 @@
+name: WWPode
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile app.py
+          # Для GUI на Windows/macOS можно добавить --windowed
+
+      # Шаги для Linux только
+      - name: Install fpm (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev build-essential
+          sudo gem install --no-document fpm
+
+      - name: Build .deb package (Linux only)
+        if: runner.os == 'Linux'
+        run: fpm -s dir -t deb -n wwp -v 0.1.0 dist/=/usr/local/bin/
+
+      - name: Build .rpm package (Linux only)
+        if: runner.os == 'Linux'
+        run: fpm -s dir -t rpm -n wwp -v 0.1.0 dist/=/usr/local/bin/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: WWPode-${{ matrix.os }}
+          path: |
+            dist/*
+            *.deb
+            *.rpm
