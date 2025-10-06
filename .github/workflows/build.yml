@@ -47,7 +47,7 @@ jobs:
         run: fpm -s dir -t rpm -n wwp -v 0.1.0 dist/=/usr/local/bin/
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: WWPode-${{ matrix.os }}
           path: |
