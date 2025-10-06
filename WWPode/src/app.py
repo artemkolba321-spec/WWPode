@@ -6,6 +6,8 @@ import utils
 from time import sleep
 from colorama import init, Fore
 
+
+
 init()
 class WWPode:
     def __init__(self, title):
@@ -29,6 +31,8 @@ class WWPode:
         ]
         self.set_title(title)
         self.init_command()
+
+
     @staticmethod
     def set_title(title):
         if os.name == "nt":  # Windows
@@ -122,11 +126,7 @@ class WWPode:
             case "cwd":
                 pach = os.getcwd()
                 print(pach)
-            case "calc":
-                print("Введите математическое выражение: ")
-                what = input(Fore.RESET + ">>> ")
-                res = eval(what)
-                print(res)
+
 
             case "?dev hash":
                 data = input(Fore.RESET + ">>> ")
@@ -138,7 +138,6 @@ class WWPode:
             case _:
                 print(self.COLORS["error"] + f"[WWP]: команды '{self.command}' не существует")
                 print("попробуйте вести 'help' это выведет список команд")
-
 
 if __name__ == '__main__':
     WWPode("WWPode")
