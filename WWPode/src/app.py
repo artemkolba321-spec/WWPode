@@ -7,7 +7,6 @@ from time import sleep
 from colorama import init, Fore
 
 init()
-
 class WWPode:
     def __init__(self, title):
         self.COLORS = {
@@ -16,8 +15,20 @@ class WWPode:
             "processes": Fore.YELLOW,
             "prompt": Fore.GREEN,
         }
-        self.init_command()
+        self.commands = [
+            "help - помощь по WWPode",
+            "exit - выход",
+            "VScode - открыть VSCode",
+            "PI - число π",
+            f"E - число {utils.italic('e')}",
+            "source code - исходный код",
+            "ceil - округление числа вверх",
+            "floor - округление числа вниз",
+            "round - округление числа",
+            "cwd - текущая директория",
+        ]
         self.set_title(title)
+        self.init_command()
     @staticmethod
     def set_title(title):
         if os.name == "nt":  # Windows
@@ -25,6 +36,15 @@ class WWPode:
         else:  # другие (Linux, macOS)
             sys.stdout.write(f"\033]0;{title}\007")
             sys.stdout.flush()
+    @staticmethod
+    def clear_screen():
+        if os.name == "nt":
+            os.system("cls")
+        else:
+            os.system("clear")
+    def show_welcome(self):
+        print(self.COLORS["info"] + "добро пожаловать в терминал для прогроммистов")
+
     def textarea(self, prompt="~ ", end="END"):
         print(self.COLORS["processes"] + f"многострочный режим включён. Напишите {end} на новой строке, чтобы выйти.")
         lines = []
@@ -37,6 +57,7 @@ class WWPode:
     def init_command(self):
         desktop = sys.platform
         self.run = True # основная переменная в методе
+        self.show_welcome()
         while self.run:
             self.command = input(self.COLORS["prompt"] + f"{desktop}@> ")
             self.handle_command()
@@ -53,16 +74,14 @@ class WWPode:
                     print(self.COLORS["info"], data["version"])
             case "help":
                 print(self.COLORS["info"] + "самые популярные команды: ")
-                print("help - помощь по WWPode")
-                print("exit - выход")
-                print("VScode - открыть VSCode")
-                print("PI - число π")
-                print(f"E - число {utils.italic("e")}")
+                for el in self.commands:
+                    print(self.COLORS["info"] + el)
+
 
             case "exit" | "quit":
                 print(self.COLORS["processes"])
-                sleep(2)
                 print("идет выход...")
+                sleep(2)
                 self.run = False
             case "VScode":
                 try:
@@ -76,11 +95,22 @@ class WWPode:
             case "source code":
                 print(self.COLORS["info"] + "Исходный код пока не опубликован")
             case "clear":
-                if os.name == "nt":
-                    os.system("cls")
-                else:
-                    os.system("clear")
-
+                self.clear_screen()
+            case "ceil":
+                x = utils.enter(cast=float)
+                print(self.COLORS["info"], math.ceil(x))
+            case "floor":
+                x = utils.enter(cast=float)
+                print(self.COLORS["info"], math.floor(x))
+            case "round-C2":
+                x = utils.enter(cast=float)
+                print(self.COLORS["info"], round(x, 2))
+            case "round-C1":
+                x = utils.enter(cast=float)
+                print(self.COLORS["info"], round(x, 1))
+            case "round":
+                x = utils.enter(cast=float)
+                print(self.COLORS["info"], round(x))
             case "edd": # TODO: реализовать команду edd
                 print(self.COLORS["processes"])
                 print("[i]: install")
@@ -92,14 +122,21 @@ class WWPode:
             case "cwd":
                 pach = os.getcwd()
                 print(pach)
+            case "calc":
+                print("Введите математическое выражение: ")
+                what = input(Fore.RESET + ">>> ")
+                res = eval(what)
+                print(res)
+
+            case "?dev hash":
+                data = input(Fore.RESET + ">>> ")
+                print(utils.md5(data))
+
             case "":
-                print(self.COLORS["error"])
-                print("[WWP]: вы нечего не вели")
+                print(self.COLORS["error"] + "[WWP]: вы нечего не вели")
                 print("попробуйте вести 'help' это выведет список команд")
             case _:
-
-                print(self.COLORS["error"])
-                print(f"[WWP]: команды '{self.command}' не существует")
+                print(self.COLORS["error"] + f"[WWP]: команды '{self.command}' не существует")
                 print("попробуйте вести 'help' это выведет список команд")
 
 
